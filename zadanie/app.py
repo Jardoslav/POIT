@@ -23,8 +23,12 @@ def background_thread(args):
     while True:
         if args:
           A = dict(args).get('A')
+          btnV = dict(args).get('btn_value')
+          sliderV = dict(args).get('slider_value')
         else:
-          A = 1 
+          A = 1
+          btnV = 'null'
+          sliderV = 0 
         #print A
         #print args  
         socketio.sleep(0.5)
@@ -33,6 +37,8 @@ def background_thread(args):
         if ser.in_waiting > 0:
             line = ser.readline().decode('utf-8').rstrip()       
             print(line)
+            s="{}\n"
+            ser.write(s.format(A).encode())
         socketio.emit('my_response',
                       {'data': line, 'count': count},
                       namespace='/test')  
@@ -45,8 +51,8 @@ def index():
 def test_message(message):   
     session['receive_count'] = session.get('receive_count', 0) + 1 
     session['A'] = message['value']    
-    emit('my_response',
-         {'data': message['value'], 'count': session['receive_count']})
+#    emit('my_response',
+#         {'data': message['value'], 'count': session['receive_count']})
  
 @socketio.on('disconnect_request', namespace='/test')
 def disconnect_request():
@@ -61,7 +67,16 @@ def test_connect():
     with thread_lock:
         if thread is None:
             thread = socketio.start_background_task(target=background_thread, args=session._get_current_object())
-    emit('my_response', {'data': 'Connected', 'count': 0})
+#    emit('my_response', {'data': 'Connected', 'count': 0})
+
+@socketio.on('click_event', namespace='/test')
+def db_message(message):   
+    session['btn_value'] = message['value']    
+
+@socketio.on('slider_event', namespace='/test')
+def slider_message(message):  
+    #print(message['value'])   
+    session['slider_value'] = message['value'] 
 
 @socketio.on('disconnect', namespace='/test')
 def test_disconnect():
