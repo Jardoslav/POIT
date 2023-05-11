@@ -105,10 +105,10 @@
         layout = {
           title: 'Data',
           xaxis: {
-              title: 'Vzorky [-]',
+              title: 'vzorky [-]',
           },
           yaxis: {
-              title: 'Napatie [V]',
+              title: 'napatie [V]',
               //range: [-1,1]
           }
         };
@@ -156,9 +156,10 @@
           //console.log($('#sliderVal').val());
           socket.emit('slider_event', {value: $('#sliderVal').val()});
           return false; });
+
       $('form#disconnect').submit(function(event) {
           socket.emit('disconnect_request');
-          return false; });         
+          return false; });
       });
     </script>
         <!-- http://jqueryui.com/tabs/#mouseover -->
@@ -188,6 +189,7 @@
             <input type="text" name="emit_value" id="emit_value" placeholder="Plnenie 0-255">
             <input type="submit" value="Send">
           </form>
+
           <form id="disconnect" method="POST" action="#">
             <input type="submit" value="Disconnect">
           </form> 
